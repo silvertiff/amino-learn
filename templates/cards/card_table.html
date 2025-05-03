@@ -2,23 +2,18 @@
 {% block content %}
 <div class="right-headers">
     <div class="table-header">Таблица</div>
+
     <table>
         <tr>
             <th>Название</th>
             <th>Строение</th>
             <th>Код</th>
-            <th>Изображение</th>
         </tr>
         {% for card in cards %}
         <tr>
             <td>{{ card.name }}</td>
             <td>{{ card.structure }}</td>
             <td>{{ card.code }}</td>
-            <td>
-                {% if card.image %}
-                <img src="{{ card.image.url }}" width="100">
-                {% endif %}
-            </td>
         </tr>
         {% endfor %}
     </table>
