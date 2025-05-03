@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="right-headers">
+    <div class="anki-header">Режим Анки</div>
+    <a href="{% url 'card_table' %}" class="table-header">Таблица</a>
+</div>
+<style>
+    .card {
+        width: 300px;
+        height: 180px;
+        perspective: 1000px;
+        margin: 20px auto;
+        cursor: pointer;
+    }
+
+    .card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+    }
+
+    .card.flipped .card-inner {
+        transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 30px 20px;
+        box-sizing: border-box;
+        background-color: #f0f8ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3em;
+        font-weight: bold;
+    }
+
+    .card-back {
+        transform: rotateY(180deg);
+        background-color: #e6f2ff;
+        flex-direction: column;
+        font-weight: normal;
+    }
+
+    .buttons {
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    button {
+        background-color: #3a7ca5;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        margin: 0 10px;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        background-color: #a0a0a0;
+        cursor: not-allowed;
+    }
+</style>
+
+<div class="card" tabindex="0" aria-label="Карточка для запоминания" role="button">
+    <div class="card-inner">
+        <div class="card-front" id="card-front">
+            <!-- Название аминокислоты -->
+        </div>
+        <div class="card-back" id="card-back">
+            <!-- Строение и код -->
+        </div>
+    </div>
+</div>
+
+<div class="buttons">
+    <button id="prev-btn" disabled>Предыдущая</button>
+    <button id="flip-btn">Перевернуть</button>
+    <button id="next-btn">Следующая</button>
+</div>
+
+{{ cards|json_script:"cards-data" }}
+
+<script>
+    const cards = JSON.parse(document.getElementById('cards-data').textContent);
+    let currentIndex = 0;
+    const card = document.querySelector('.card');
+    const cardFront = document.getElementById('card-front');
+    const cardBack = document.getElementById('card-back');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const flipBtn = document.getElementById('flip-btn');
+
+    // Функция обновления содержимого карточки
+    function updateCard(index) {
+        const c = cards[index];
+        cardFront.textContent = c.name;
+        cardBack.innerHTML = `<div><strong>Строение:</strong> ${c.structure}</div><div><strong>Код:</strong> ${c.code}</div>`;
+        card.classList.remove('flipped');
+
+        // Кнопки
+        prevBtn.disabled = index === 0;
+        nextBtn.disabled = index === cards.length - 1;
+    }
+
+    // Инициализация
+    updateCard(currentIndex);
+
+    // Обработчик переворота карточки
+    flipBtn.addEventListener('click', () => {
+        card.classList.toggle('flipped');
+    });
+
+    // Переключение карточек
+    prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateCard(currentIndex);
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentIndex < cards.length - 1) {
+            currentIndex++;
+            updateCard(currentIndex);
+        }
+    });
+
+    // Переворот по клику на карточку
+    card.addEventListener('click', () => {
+        card.classList.toggle('flipped');
+    });
+
+    // Переворот по Enter/Space для доступности
+    card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            card.classList.toggle('flipped');
+        }
+    });
+</script>
+
+{% endblock %}

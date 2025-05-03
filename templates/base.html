@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Карточки аминокислот</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+    <header>
+        <h1>Учебный сервис: Карточки аминокислот</h1>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+
+</html>

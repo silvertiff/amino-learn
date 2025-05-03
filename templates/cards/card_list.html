@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Список карточек</h2>
+  <a href="{% url 'add_card' %}">Добавить новую карточку</a>
+  <ul>
+    {% for card in cards %}
+      <li>{{ card.name }} ({{ card.code }})</li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'anki_mode' %}">Режим Анки</a>
+  <a href="{% url 'card_table' %}">Таблица</a>
+{% endblock %}
